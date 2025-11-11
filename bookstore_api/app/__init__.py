@@ -4,7 +4,7 @@ from flask import Flask, jsonify
 from dotenv import load_dotenv
 from werkzeug.exceptions import HTTPException
 
-from .extensions import db, migrate, ma
+from .extensions import db, migrate, ma, jwt
 from .helpers import ApiError
 # Import config
 from .config import DevelopmentConfig, ProductionConfig, TestConfig
@@ -32,6 +32,7 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     ma.init_app(app)
+    jwt.init_app(app)
 
     @app.errorhandler(404)
     def resource_not_found(exception):
