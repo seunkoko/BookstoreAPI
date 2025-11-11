@@ -2,7 +2,7 @@ import os
 
 from flask import Flask
 from dotenv import load_dotenv
-from .extensions import db, migrate
+from .extensions import db, migrate, ma
 # Import config
 from .config import DevelopmentConfig, ProductionConfig, TestConfig
 
@@ -24,6 +24,7 @@ def create_app():
     # Initialize database and migrations
     db.init_app(app)
     migrate.init_app(app, db)
+    ma.init_app(app)
 
     with app.app_context():
         db.create_all()

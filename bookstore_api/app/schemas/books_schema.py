@@ -1,0 +1,16 @@
+from marshmallow import fields
+
+from app.extensions import ma
+
+
+class BookSchema(ma.Schema):
+    id = fields.Integer(dump_only=True)
+    title = fields.String(required=True)
+    description = fields.String()
+    author = fields.Nested('AuthorSchema', only=['name'])
+    reviews = fields.Nested('ReviewSchema', many=True, exclude=['book'])
+    created_at = fields.DateTime(dump_only=True)
+    updated_at = fields.DateTime(dump_only=True)
+
+book = BookSchema()
+books = BookSchema(many=True)
