@@ -9,6 +9,8 @@ class Config:
     ENV = 'base'
     DEBUG = False
     SECRET_KEY = os.getenv('SECRET_KEY')
+    SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 class DevelopmentConfig(Config):
     # Development-specific configuration settings
