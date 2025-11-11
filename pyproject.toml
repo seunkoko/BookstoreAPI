@@ -16,6 +16,7 @@ psycopg2-binary = "^2.9.11"
 sqlalchemy = "^2.0.44"
 alembic = "^1.17.1"
 flask-marshmallow = "^1.3.0"
+flask-restful = "^0.3.10"
 
 [tool.poetry.scripts]
 start = "bookstore_api:app.run"
