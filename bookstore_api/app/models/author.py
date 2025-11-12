@@ -4,14 +4,14 @@ from typing import List, TYPE_CHECKING
 from sqlalchemy import String, DateTime, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from bookstore_api.app.extensions import Base
+from .mixins import TransactionMixin
 
 # Use TYPE_CHECKING block to import models ONLY during static analysis
 # and not at runtime.
 if TYPE_CHECKING:
-    from .book import Book
+    from . import Book
 
-class Author(Base):
+class Author(TransactionMixin):
     __tablename__ = "authors"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -20,8 +20,8 @@ class Author(Base):
 
     books: Mapped[List['Book']] = relationship('Book', back_populates='author')
     
-    created_at: Mapped[datetime.datetime] = mapped_column(DateTime(), nullable=False)
-    updated_at: Mapped[datetime.datetime] = mapped_column(DateTime(), nullable=False)
+    created_at: Mapped[datetime.datetime] = mapped_column(DateTime(), default=datetime.datetime.now)
+    updated_at: Mapped[datetime.datetime] = mapped_column(DateTime(), default=datetime.datetime.now, onupdate=datetime.datetime.now)
 
     def __repr__(self):
         return '<Author %r>' % self.name

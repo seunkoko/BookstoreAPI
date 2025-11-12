@@ -6,7 +6,7 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from dotenv import load_dotenv
 
-from bookstore_api.app.extensions import Base
+from bookstore_api.app.extensions import db
 from bookstore_api.app.models.user import User
 from bookstore_api.app.models.book import Book
 from bookstore_api.app.models.author import Author
@@ -30,7 +30,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = Base.metadata
+target_metadata = db.Model.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

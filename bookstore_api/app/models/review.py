@@ -4,15 +4,16 @@ from typing import TYPE_CHECKING
 from sqlalchemy import Integer, DateTime, Text, CheckConstraint, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from bookstore_api.app.extensions import Base
+from .mixins import TransactionMixin
+
 
 # Use TYPE_CHECKING block to import models ONLY during static analysis
 # and not at runtime.
 if TYPE_CHECKING:
-    from .user import User
-    from .book import Book
+    from . import User
+    from . import Book
 
-class Review(Base):
+class Review(TransactionMixin):
     __tablename__ = "reviews"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -25,8 +26,8 @@ class Review(Base):
     user: Mapped['User'] = relationship('User', back_populates='reviews')
     book: Mapped['Book'] = relationship('Book', back_populates='reviews')
     
-    created_at: Mapped[datetime.datetime] = mapped_column(DateTime(), nullable=False)
-    updated_at: Mapped[datetime.datetime] = mapped_column(DateTime(), nullable=False)
+    created_at: Mapped[datetime.datetime] = mapped_column(DateTime(), default=datetime.datetime.now)
+    updated_at: Mapped[datetime.datetime] = mapped_column(DateTime(), default=datetime.datetime.now, onupdate=datetime.datetime.now)
 
     # Adds a table-level CheckConstraint for ratings from 1 to 5
     __table_args__ = (
