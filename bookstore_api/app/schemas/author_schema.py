@@ -1,6 +1,6 @@
 from marshmallow import Schema, fields
 
-from app.extensions import ma
+from bookstore_api.app.extensions import ma
 
 
 class AuthorSchema(ma.Schema):
