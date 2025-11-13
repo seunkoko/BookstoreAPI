@@ -1,6 +1,7 @@
 from flask import Blueprint, request, current_app
+from flask_jwt_extended import create_access_token
 from marshmallow import ValidationError
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from bookstore_api.app.helpers import handle_errors, api_response
 from bookstore_api.app.schemas.user_schema import UserSchema
@@ -11,12 +12,6 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 @auth_bp.route('/register', methods=['POST'])
 def register():
     # handle user registration
-    """
-    - get data from request
-    - validate data (schema, password, check if user exists)
-    - create user 
-    - return success
-    """
     user_schema = UserSchema()
 
     try:
@@ -54,4 +49,23 @@ def register():
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
-    return handle_errors('login failure', 401)
+    # handle user login
+    login_data = request.get_json(silent=True)
+    if not login_data or 'email' not in login_data or 'password' not in login_data:
+        return handle_errors('please provide credentials to login', 400)
+    
+    user = User.query.filter_by(email=login_data['email']).one_or_none()
+    if not user or not check_password_hash(user.password_hash, login_data['password']):
+        return handle_errors(
+            'invalid email or password, please check your credentials to login again',
+            400
+        )
+    
+    return api_response(
+        data={
+            'access_token': create_access_token(identity=user.id),
+            'user': UserSchema().dump(user)
+        },
+        message="Login successful",
+        status_code=200
+    )
