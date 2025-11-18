@@ -2,13 +2,9 @@ import click
 
 from flask.cli import AppGroup
 from werkzeug.security import generate_password_hash
-from enum import Enum
+from bookstore_api.app.helpers import RoleType
 
 from bookstore_api.app.extensions import db
-
-class Role(Enum):
-    ADMIN = 'admin'
-    USER = 'user'
 
 db_cli = AppGroup('seed', help='Database related commands.')
 
@@ -85,7 +81,7 @@ def create_admin_user(username, email, password):
     click.echo('Creating admin user...')
     try:
         # fetch admin role
-        admin_role = db.session.query(Role).filter(Role.name == 'admin').one_or_none()        
+        admin_role = db.session.query(Role).filter(RoleType.name == 'admin').one_or_none()        
         if not admin_role: 
             click.echo("❌ Admin role not found. Please seed roles first.")
             return
