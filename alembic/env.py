@@ -7,10 +7,7 @@ from sqlalchemy import pool
 from dotenv import load_dotenv
 
 from bookstore_api.app.extensions import db
-from bookstore_api.app.models.user import User
-from bookstore_api.app.models.book import Book
-from bookstore_api.app.models.author import Author
-from bookstore_api.app.models.review import Review
+from bookstore_api.app.models import *
 
 from alembic import context
 
