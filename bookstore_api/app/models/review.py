@@ -10,8 +10,7 @@ from .mixins import TransactionMixin
 # Use TYPE_CHECKING block to import models ONLY during static analysis
 # and not at runtime.
 if TYPE_CHECKING:
-    from . import User
-    from . import Book
+    from . import User, Book
 
 class Review(TransactionMixin):
     __tablename__ = "reviews"

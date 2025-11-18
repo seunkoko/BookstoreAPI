@@ -12,6 +12,7 @@ class UserSchema(ma.Schema):
     updated_at = fields.DateTime(dump_only=True)
 
     reviews = fields.Nested('ReviewSchema', many=True, exclude=['user'])
+    role = fields.Nested('RoleSchema', only=['name'])
 
 user = UserSchema()
 users = UserSchema(many=True)
