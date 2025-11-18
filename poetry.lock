@@ -2,13 +2,13 @@
 
 [[package]]
 name = "alembic"
-version = "1.17.1"
+version = "1.17.2"
 description = "A database migration tool for SQLAlchemy."
 optional = false
 python-versions = ">=3.10"
 files = [
-    {file = "alembic-1.17.1-py3-none-any.whl", hash = "sha256:cbc2386e60f89608bb63f30d2d6cc66c7aaed1fe105bd862828600e5ad167023"},
-    {file = "alembic-1.17.1.tar.gz", hash = "sha256:8a289f6778262df31571d29cca4c7fbacd2f0f582ea0816f4c399b6da7528486"},
+    {file = "alembic-1.17.2-py3-none-any.whl", hash = "sha256:f483dd1fe93f6c5d49217055e4d15b905b425b6af906746abb35b69c1996c4e6"},
+    {file = "alembic-1.17.2.tar.gz", hash = "sha256:bbe9751705c5e0f14877f02d46c53d10885e377e3d90eda810a016f9baa19e8e"},
 ]
 
 [package.dependencies]
@@ -46,13 +46,13 @@ files = [
 
 [[package]]
 name = "click"
-version = "8.3.0"
+version = "8.3.1"
 description = "Composable command line interface toolkit"
 optional = false
 python-versions = ">=3.10"
 files = [
-    {file = "click-8.3.0-py3-none-any.whl", hash = "sha256:9b9f285302c6e3064f4330c05f05b81945b2a39544279343e6e7c5f27a9baddc"},
-    {file = "click-8.3.0.tar.gz", hash = "sha256:e7b8232224eba16f4ebe410c25ced9f7875cb5f3263ffc93cc3e8da705e229c4"},
+    {file = "click-8.3.1-py3-none-any.whl", hash = "sha256:981153a64e25f12d547d3426c367a4857371575ee7ad18df2a6183ab0545b2a6"},
+    {file = "click-8.3.1.tar.gz", hash = "sha256:12ff4785d337a1bb490bb7e9c2b1ee5da3112e94a8622f26a6c77f5d2fc6842a"},
 ]
 
 [package.dependencies]
@@ -416,6 +416,26 @@ docs = ["autodocsumm (==0.2.14)", "furo (==2025.9.25)", "sphinx (==8.2.3)", "sph
 tests = ["pytest", "simplejson"]
 
 [[package]]
+name = "marshmallow-sqlalchemy"
+version = "1.4.2"
+description = "SQLAlchemy integration with the marshmallow (de)serialization library"
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "marshmallow_sqlalchemy-1.4.2-py3-none-any.whl", hash = "sha256:65aee301c4601e76a2fdb02764a65c18913afba2a3506a326c625d13ab405b40"},
+    {file = "marshmallow_sqlalchemy-1.4.2.tar.gz", hash = "sha256:6410304bf98ec26ea35f3f9d3cee82e51fd093c434612add32a0bdcdb5668f7c"},
+]
+
+[package.dependencies]
+marshmallow = ">=3.18.0"
+SQLAlchemy = ">=1.4.40,<3.0"
+
+[package.extras]
+dev = ["marshmallow-sqlalchemy[tests]", "pre-commit (>=3.5,<5.0)", "tox"]
+docs = ["furo (==2024.8.6)", "sphinx (==8.2.3)", "sphinx-copybutton (==0.5.2)", "sphinx-design (==0.6.1)", "sphinx-issues (==5.0.0)", "sphinxext-opengraph (==0.10.0)"]
+tests = ["pytest (<9)", "pytest-lazy-fixtures"]
+
+[[package]]
 name = "psycopg2-binary"
 version = "2.9.11"
 description = "psycopg2 - Python-PostgreSQL Database Adapter"
@@ -670,4 +690,4 @@ watchdog = ["watchdog (>=2.3)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "7ff58d499d1d14d76de5bc56ac780bac9a5d69bd3028bf1ce5c1223bfbf79ca7"
+content-hash = "3f557333bd059ff6ab859df386915521a0d7254d18a619e857041cba7a4f19d4"

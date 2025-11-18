@@ -6,6 +6,7 @@ from werkzeug.exceptions import HTTPException
 
 from .extensions import db, migrate, ma, jwt
 from .helpers import ApiError
+from .scripts import init_app_commands
 # Import config
 from .config import DevelopmentConfig, ProductionConfig, TestConfig
 # Import routes
@@ -34,6 +35,9 @@ def create_app():
     ma.init_app(app)
     jwt.init_app(app)
 
+    # Register custom CLI commands
+    init_app_commands(app)
+    
     @app.errorhandler(404)
     def resource_not_found(exception):
         """Return custom JSON when resource does not exist"""
