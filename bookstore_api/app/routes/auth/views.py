@@ -3,9 +3,9 @@ from flask_jwt_extended import create_access_token
 from marshmallow import ValidationError
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from bookstore_api.app.helpers import handle_errors, api_response
+from bookstore_api.app.helpers import handle_errors, api_response, RoleType
 from bookstore_api.app.schemas.user_schema import UserSchema
-from bookstore_api.app.models.user import User
+from bookstore_api.app.models import User, Role
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
@@ -24,11 +24,17 @@ def register():
     if user_exists:
         return handle_errors('user already exists', 400)
     
+    role = Role.query.filter_by(name=RoleType.USER.value).one_or_none()
+    if not role:
+        current_app.logger.error(f"Role name not found: {RoleType.USER.value} when creating user")
+        return handle_errors('role not found', 400)
+    
     hashed_password = generate_password_hash(validated_data['password'])
     new_user = User(
         username=validated_data['username'],
         email=validated_data['email'],
-        password_hash=hashed_password
+        password_hash=hashed_password,
+        role_id=role.id
     )
 
     try:
