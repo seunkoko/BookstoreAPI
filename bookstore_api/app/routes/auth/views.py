@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from bookstore_api.app.helpers import handle_errors, api_response, RoleType
 from bookstore_api.app.schemas.user_schema import UserSchema
 from bookstore_api.app.models import User, Role
+from bookstore_api.app.extensions import jwt
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
@@ -69,9 +70,17 @@ def login():
     
     return api_response(
         data={
-            'access_token': create_access_token(identity=user.id),
+            'access_token': create_access_token(identity=str(user.id)),
             'user': UserSchema().dump(user)
         },
         message="Login successful",
         status_code=200
     )
+
+@jwt.user_lookup_loader
+def user_lookup_callback(_jwt_header, jwt_data):
+    # 'jwt_data' is a dictionary containing the claims (payload) of the token
+    # The identity is stored under the key defined by JWT_IDENTITY_CLAIM (default: 'sub')
+    identity = jwt_data["sub"] 
+    
+    return User.query.get(int(identity))

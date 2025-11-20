@@ -15,7 +15,7 @@ class Author(TransactionMixin):
     __tablename__ = "authors"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    name: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     bio: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     books: Mapped[List['Book']] = relationship('Book', back_populates='author')
