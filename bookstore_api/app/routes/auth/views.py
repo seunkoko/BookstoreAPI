@@ -1,12 +1,18 @@
-from flask import Blueprint, request, current_app
-from flask_jwt_extended import create_access_token
+from flask import Blueprint, request, current_app, jsonify
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from marshmallow import ValidationError
 from werkzeug.security import generate_password_hash, check_password_hash
+import redis
 
-from bookstore_api.app.helpers import handle_errors, api_response, RoleType
+from bookstore_api.app.helpers import (
+    handle_errors, api_response, RoleType, revoke_token, is_valid_email_format, is_strong_password
+)
 from bookstore_api.app.schemas.user_schema import UserSchema
 from bookstore_api.app.models import User, Role
 from bookstore_api.app.extensions import jwt
+
+### Initialize Redis connection
+redis_db = redis.StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
@@ -20,6 +26,12 @@ def register():
     except ValidationError as e:
         current_app.logger.error(f"Validation error occured during registration: {e}")
         return handle_errors('register failure', 400)
+    
+    if not is_valid_email_format(validated_data['email']):
+        return handle_errors('invalid email format', 400)
+    
+    if not is_strong_password(validated_data['password']):
+        return handle_errors('weak password', 400)
     
     user_exists = User.query.filter_by(email=validated_data['email']).one_or_none()
     if user_exists:
@@ -76,6 +88,32 @@ def login():
         message="Login successful",
         status_code=200
     )
+@auth_bp.route("/logout", methods=["DELETE"])
+@jwt_required(verify_type=False)
+def logout():
+    return revoke_token(redis_db, get_jwt()["jti"])
+
+@auth_bp.route("/revoke_access", methods=["DELETE"])
+@jwt_required()
+def revoke_access_token():
+    return revoke_token(redis_db, get_jwt()["jti"])
+
+@auth_bp.route("/revoke_refresh", methods=["DELETE"])
+@jwt_required(refresh=True)
+def revoke_refresh_token():
+    return revoke_token(redis_db, get_jwt()["jti"])
+
+@auth_bp.route("/refresh", methods=["POST"])
+@jwt_required(refresh=True)
+def refresh():
+    identity = get_jwt_identity()
+    access_token = create_access_token(identity=identity)
+    return jsonify(access_token=access_token)
+
+@jwt.token_in_blocklist_loader
+def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
+    jti = jwt_payload["jti"]
+    return redis_db.get(jti) is not None
 
 @jwt.user_lookup_loader
 def user_lookup_callback(_jwt_header, jwt_data):

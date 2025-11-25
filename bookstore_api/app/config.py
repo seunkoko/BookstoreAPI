@@ -16,6 +16,11 @@ class Config:
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
     JWT_TOKEN_LOCATION = ['headers', 'cookies']
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=3)
+    CACHE_TYPE = os.getenv('CACHE_TYPE')
+    CACHE_DEFAULT_TIMEOUT = int(os.getenv('CACHE_DEFAULT_TIMEOUT', 300))
+    REDIS_HOST = os.getenv('REDIS_HOST')
+    REDIS_PORT = os.getenv('REDIS_PORT')
+    REDIS_DB = os.getenv('REDIS_DB')
 
 class DevelopmentConfig(Config):
     # Development-specific configuration settings
