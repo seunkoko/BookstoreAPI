@@ -2,8 +2,7 @@ from .api_response import api_response
 from .errors import handle_errors, ApiError
 from .enum_types import RoleType
 from .role_required import role_required
-from .revoke_jwt_token import revoke_token
-from .auth import is_valid_email_format, is_strong_password
+from .auth_helper import is_valid_email_format, is_strong_password, revoke_token
 
 __all__ = [
     'api_response',
