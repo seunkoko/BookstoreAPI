@@ -7,6 +7,13 @@ extension-pkg-whitelist=
     .pyd,
     .so
 
+# Directories to completely ignore during linting.
+ignore=
+    alembic,
+    migrations,
+    __pycache__
+
+
 # --- MESSAGES CONTROL ---
 # Controls which errors (E), warnings (W), and conventions (C) are reported.
 [MESSAGES CONTROL]
@@ -14,6 +21,7 @@ extension-pkg-whitelist=
 # clash with modern library usage (e.g., SQLAlchemy/boto3 often trigger no-member).
 disable=
     # Documentation & Naming Conventions
+    missing-module-docstring,
     missing-class-docstring,
     missing-function-docstring,
     invalid-name,
