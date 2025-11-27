@@ -11,6 +11,7 @@ extension-pkg-whitelist=
 ignore=
     alembic,
     migrations,
+    .venv,
     __pycache__
 
 
