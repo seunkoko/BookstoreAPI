@@ -31,7 +31,7 @@ jobs:
               # CRUCIAL STEP: Use 'poetry run' to execute pylint inside the virtual environment.
               # This ensures Pylint can find all packages installed via poetry.
               run: |
-                  poetry run pylint --rcfile=./.pylintrc $(find . -name "*.py" | tr '\n' ' ')
+                  poetry run pylint --rcfile=./.pylintrc .
               # The command:
               # 1. `poetry run pylint`: Executes Pylint within the environment created by Poetry.
               # 2. `--rcfile=./.pylintrc`: Uses the custom configuration file (your Canvas content).
