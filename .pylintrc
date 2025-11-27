@@ -28,8 +28,8 @@ ignore-patterns=
     wsgi.py,         # WSGI application entry point
     asgi.py,         # ASGI application entry point
     manage.py,       # Django/Flask management scripts
-    *\.txt,
-    *\.md
+    .*\.txt,
+    .*\.md 
 
 
 # --- MESSAGES CONTROL ---
