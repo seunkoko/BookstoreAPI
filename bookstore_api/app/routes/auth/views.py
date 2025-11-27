@@ -25,7 +25,7 @@ def register():
         validated_data = user_schema.load(request.get_json(silent=True))
     except ValidationError as e:
         current_app.logger.error(f"Validation error occured during registration: {e}")
-        return handle_errors('register failure', 400)
+        return handle_errors('register failure', 400, e)
     
     if not is_valid_email_format(validated_data['email']):
         return handle_errors('invalid email format', 400)
@@ -88,6 +88,7 @@ def login():
         message="Login successful",
         status_code=200
     )
+
 @auth_bp.route("/logout", methods=["DELETE"])
 @jwt_required(verify_type=False)
 def logout():
