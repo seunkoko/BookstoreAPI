@@ -1,9 +1,10 @@
+# --- GitHub Actions Workflow for Pylint using Poetry ---
 name: Pylint
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
-    build:
+    lint:
         runs-on: ubuntu-latest
         strategy:
             matrix:
@@ -11,17 +12,27 @@ jobs:
         steps:
             - uses: actions/checkout@v4
             - name: Set up Python ${{ matrix.python-version }}
-              uses: actions/setup-python@v3
+              uses: actions/setup-python@v5
               with:
                   python-version: ${{ matrix.python-version }}
-            - name: Install dependencies
+
+            - name: Install Poetry
               run: |
-                  python -m pip install --upgrade pip
-                  pip install pylint
+                  pip install poetry
+
+            - name: Configure Poetry and Install Dependencies
+              # Configures Poetry to create the virtual environment in the project directory
+              # and installs project dependencies (including Pylint, if it's in your dev dependencies)
+              run: |
+                  poetry config virtualenvs.in-project true
+                  poetry install --no-root --only dev # Ensure dev dependencies (like pylint) are installed
+
             - name: Run Pylint with .pylintrc configuration
-              # This is the crucial step: using the --rcfile flag
+              # CRUCIAL STEP: Use 'poetry run' to execute pylint inside the virtual environment.
+              # This ensures Pylint can find all packages installed via poetry.
               run: |
-                  pylint --rcfile=./.pylintrc $(find . -name "*.py" | tr '\n' ' ')
-              # The above command tells Pylint:
-              # 1. Use the configuration file found at './.pylintrc'.
-              # 2. Check all Python files recursively found in the current directory.
+                  poetry run pylint --rcfile=./.pylintrc $(find . -name "*.py" | tr '\n' ' ')
+              # The command:
+              # 1. `poetry run pylint`: Executes Pylint within the environment created by Poetry.
+              # 2. `--rcfile=./.pylintrc`: Uses the custom configuration file (your Canvas content).
+              # 3. `$(find . -name "*.py" | tr '\n' ' ')`: Finds all .py files recursively.
