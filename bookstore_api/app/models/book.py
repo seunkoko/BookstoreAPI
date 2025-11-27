@@ -24,7 +24,7 @@ class Book(TransactionMixin):
 
     # Foreign keys
     author_id: Mapped[int] = mapped_column(ForeignKey('authors.id'), nullable=False)
-    category_id: Mapped[int] = mapped_column(ForeignKey('book_categories.id'), nullable=False)
+    category_id: Mapped[int] = mapped_column(ForeignKey('book_categories.id', ondelete='SET NULL'), nullable=True)
 
     author: Mapped['Author'] = relationship('Author', back_populates='books')
     category: Mapped['BookCategory'] = relationship('BookCategory', back_populates='books')
