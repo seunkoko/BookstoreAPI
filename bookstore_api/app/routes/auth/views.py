@@ -88,6 +88,7 @@ def login():
         message="Login successful",
         status_code=200
     )
+
 @auth_bp.route("/logout", methods=["DELETE"])
 @jwt_required(verify_type=False)
 def logout():
