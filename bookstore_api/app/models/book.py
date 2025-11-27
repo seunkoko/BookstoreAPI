@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from . import Review, Author, BookCategory
 
 class Book(TransactionMixin):
+    """Book model representing a book in the bookstore."""
     __tablename__ = "books"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -24,14 +25,16 @@ class Book(TransactionMixin):
 
     # Foreign keys
     author_id: Mapped[int] = mapped_column(ForeignKey('authors.id'), nullable=False)
-    category_id: Mapped[int] = mapped_column(ForeignKey('book_categories.id', ondelete='SET NULL'), nullable=True)
+    category_id: Mapped[int] = mapped_column(
+        ForeignKey('book_categories.id', ondelete='SET NULL'), nullable=True)
 
     author: Mapped['Author'] = relationship('Author', back_populates='books')
     category: Mapped['BookCategory'] = relationship('BookCategory', back_populates='books')
     reviews: Mapped[List['Review']] = relationship('Review', back_populates='book')
-    
+
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime(), default=datetime.datetime.now)
-    updated_at: Mapped[datetime.datetime] = mapped_column(DateTime(), default=datetime.datetime.now, onupdate=datetime.datetime.now)
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(), default=datetime.datetime.now, onupdate=datetime.datetime.now)
 
     def __repr__(self):
-        return '<Book %r>' % self.title
+        return f'<Book {self.title}>'

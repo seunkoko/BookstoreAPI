@@ -1,4 +1,5 @@
 def handle_errors(description, status_code=None, e: Exception = None):
+    """Helper function to raise ApiError with standardized format."""
     payload = {
         "error": e
     }
@@ -7,6 +8,7 @@ def handle_errors(description, status_code=None, e: Exception = None):
 
 
 class ApiError(Exception):
+    """Custom API Error Exception Class"""
     def __init__(self, message, status_code=400, payload=None):
         Exception.__init__(self)
 

@@ -1,0 +1,55 @@
+# --- Pylint Configuration File (INI Format) ---
+# Save this file as .pylintrc or pylintrc in the root of your project.
+
+[MASTER]
+# Specify the Python file extensions Pylint should check.
+extension-pkg-whitelist=
+    .pyd,
+    .so
+
+# --- MESSAGES CONTROL ---
+# Controls which errors (E), warnings (W), and conventions (C) are reported.
+[MESSAGES CONTROL]
+# List of checks to disable. These are often considered too pedantic or
+# clash with modern library usage (e.g., SQLAlchemy/boto3 often trigger no-member).
+disable=
+    # Documentation & Naming Conventions
+    missing-class-docstring,
+    missing-function-docstring,
+    invalid-name,
+
+    # Design & Style Checks
+    too-few-public-methods,
+    too-many-locals,
+    
+    # Imports & External Library Issues (Use with caution)
+    no-member,             # Disable if using ORMs or dynamic libraries extensively.
+    unsubscriptable-object,
+    unsupported-delete-operation,
+    
+    # General Warnings
+    fixme                  # Warnings about 'FIXME' or 'TODO' comments.
+
+# --- BASIC ---
+# Basic naming style enforcement.
+[BASIC]
+# Regex for allowed variable names (allows snake_case and CAPS_SNAKE_CASE)
+variable-rgx=[a-z_][a-z0-9_]{1,30}$|^[_A-Z][A-Z0-9_]*$
+
+# --- DESIGN ---
+# Settings that control code complexity and structure.
+[DESIGN]
+# Maximum number of statements in a function
+max-statements=50
+
+# Maximum number of arguments in a function call
+max-args=7
+
+# Maximum depth of nested blocks (if, for, while)
+max-nested-blocks=4
+
+# --- FORMAT ---
+# Settings related to code formatting (whitespace, line length).
+[FORMAT]
+# The single most important setting: Maximum length of a source line.
+max-line-length=120

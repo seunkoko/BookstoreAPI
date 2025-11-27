@@ -29,12 +29,16 @@ def upload_photo_to_s3(file_data, file_name):
             }
         )
 
-        public_url = f"https://{os.getenv('AWS_S3_BUCKET_NAME')}.s3.{os.getenv('AWS_S3_REGION_NAME')}.amazonaws.com/{s3_key}"
+        public_url = public_url = (
+            f"https://{os.getenv('AWS_S3_BUCKET_NAME')}"
+            f".s3.{os.getenv('AWS_S3_REGION_NAME')}"
+            f".amazonaws.com/{s3_key}"
+        )
         return public_url, s3_key
     except Exception as e:
         current_app.logger.error(f"Failed to upload file {file_name} to S3: {e}")
         return None, None
-    
+
 def delete_photo_from_s3(s3_key):
     """Deletes a photo from the specified S3 bucket."""
     try:

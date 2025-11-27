@@ -85,7 +85,7 @@ def create_admin_user(username, email, password):
         if not admin_role: 
             click.echo("❌ Admin role not found. Please seed roles first.")
             return
-        
+
         # create admin user
         db.session.add(
             User(
@@ -98,7 +98,7 @@ def create_admin_user(username, email, password):
         
         # Commit the transaction
         db.session.commit()
-        
+
         click.echo(f"🔥 Successfully created admin user.")
     except Exception as e:
         # Rollback the session in case of an error

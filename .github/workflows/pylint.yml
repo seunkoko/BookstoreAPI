@@ -3,21 +3,25 @@ name: Pylint
 on: [push]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.8", "3.9", "3.10"]
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pylint
-    - name: Analysing the code with pylint
-      run: |
-        pylint $(git ls-files '*.py')
+    build:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                python-version: ['3.8', '3.9', '3.10']
+        steps:
+            - uses: actions/checkout@v4
+            - name: Set up Python ${{ matrix.python-version }}
+              uses: actions/setup-python@v3
+              with:
+                  python-version: ${{ matrix.python-version }}
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install pylint
+            - name: Run Pylint with .pylintrc configuration
+              # This is the crucial step: using the --rcfile flag
+              run: |
+                  pylint --rcfile=./.pylintrc $(find . -name "*.py" | tr '\n' ' ')
+              # The above command tells Pylint:
+              # 1. Use the configuration file found at './.pylintrc'.
+              # 2. Check all Python files recursively found in the current directory.

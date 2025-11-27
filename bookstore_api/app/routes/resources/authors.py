@@ -22,7 +22,7 @@ class AuthorListResource(Resource):
         except Exception as e:
             current_app.logger.error(f"Error fetching authors: {e}")
             return handle_errors('Error fetching authors', 500, e)
-    
+
     def post(self):
         author_data = request.get_json(silent=True)
         try:
@@ -30,11 +30,11 @@ class AuthorListResource(Resource):
         except ValidationError as e:
             current_app.logger.error(f"Validation error occured during author creation: {e}")
             return handle_errors('author creation failure', 400, e)
-    
+
         author_exists = Author.query.filter_by(name=validated_data['name'].lower()).one_or_none()
         if author_exists:
             return handle_errors(f'author with name ({validated_data["name"]}) already exists', 400)
-        
+
         try:
             validated_data['name'] = validated_data['name'].lower()
             new_author = Author(**validated_data)
@@ -42,7 +42,7 @@ class AuthorListResource(Resource):
         except Exception as e:
             current_app.logger.error(f"Error creating author: {e}")
             return handle_errors('Error creating author', 500, e)
-        
+
         return api_response({
             'author': author_schema.dump(new_author)
         }, message='Author created successfully', status_code=201)
@@ -53,11 +53,11 @@ class AuthorResource(Resource):
 
     def get(self, author_id):
         author = Author.query.get_or_404(author_id, description='Author not found')
-        
+
         return api_response({
             'author': author_schema.dump(author)
         }, message='Author fetched successfully', status_code=200)
-    
+
     def put(self, author_id):
         author_data = request.get_json(silent=True)
         author_schema = AuthorSchema(partial=True, exclude=['books'])
@@ -72,24 +72,24 @@ class AuthorResource(Resource):
         for key, value in validated_data.items():
             # Use built-in Python function setattr() to update the attribute by name
             setattr(author, key, value)
-    
+
         try:
             author.save()
         except Exception as e:
             current_app.logger.error(f"Error updating author: {e}")
             return handle_errors('Error updating author', 500, e)
-        
+
         return api_response({
             'author': author_schema.dump(author)
         }, message='Author updated successfully', status_code=200)
-    
+
     def delete(self, author_id):
         author = Author.query.get_or_404(author_id, description='Author not found')
-    
+
         try:
             author.delete()
         except Exception as e:
             current_app.logger.error(f"Error deleting author: {e}")
             return handle_errors('Error deleting author', 500, e)
-        
+
         return api_response({}, message='Author deleted successfully', status_code=204)

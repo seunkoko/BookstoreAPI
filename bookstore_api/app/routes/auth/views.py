@@ -26,22 +26,22 @@ def register():
     except ValidationError as e:
         current_app.logger.error(f"Validation error occured during registration: {e}")
         return handle_errors('register failure', 400, e)
-    
+
     if not is_valid_email_format(validated_data['email']):
         return handle_errors('invalid email format', 400)
-    
+
     if not is_strong_password(validated_data['password']):
         return handle_errors('weak password', 400)
-    
+
     user_exists = User.query.filter_by(email=validated_data['email']).one_or_none()
     if user_exists:
         return handle_errors('user already exists', 400)
-    
+
     role = Role.query.filter_by(name=RoleType.USER.value).one_or_none()
     if not role:
         current_app.logger.error(f"Role name not found: {RoleType.USER.value} when creating user")
         return handle_errors('role not found', 400)
-    
+
     hashed_password = generate_password_hash(validated_data['password'])
     new_user = User(
         username=validated_data['username'],
@@ -59,12 +59,12 @@ def register():
             500,
             e
         )
-    
+
     return api_response(
         data=user_schema.dump(new_user),
         message="User created successfully",
         status_code=201
-    )  
+    )
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
@@ -72,14 +72,14 @@ def login():
     login_data = request.get_json(silent=True)
     if not login_data or 'email' not in login_data or 'password' not in login_data:
         return handle_errors('please provide credentials to login', 400)
-    
+
     user = User.query.filter_by(email=login_data['email']).one_or_none()
     if not user or not check_password_hash(user.password_hash, login_data['password']):
         return handle_errors(
             'invalid email or password, please check your credentials to login again',
             400
         )
-    
+
     return api_response(
         data={
             'access_token': create_access_token(identity=str(user.id)),
@@ -120,6 +120,6 @@ def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
 def user_lookup_callback(_jwt_header, jwt_data):
     # 'jwt_data' is a dictionary containing the claims (payload) of the token
     # The identity is stored under the key defined by JWT_IDENTITY_CLAIM (default: 'sub')
-    identity = jwt_data["sub"] 
-    
+    identity = jwt_data["sub"]
+
     return User.query.get(int(identity))

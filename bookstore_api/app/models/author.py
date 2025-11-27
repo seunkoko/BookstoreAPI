@@ -19,9 +19,10 @@ class Author(TransactionMixin):
     bio: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     books: Mapped[List['Book']] = relationship('Book', back_populates='author')
-    
+
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime(), default=datetime.datetime.now)
-    updated_at: Mapped[datetime.datetime] = mapped_column(DateTime(), default=datetime.datetime.now, onupdate=datetime.datetime.now)
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(), default=datetime.datetime.now, onupdate=datetime.datetime.now)
 
     def __repr__(self):
-        return '<Author %r>' % self.name
+        return f'<Author {self.name}>'

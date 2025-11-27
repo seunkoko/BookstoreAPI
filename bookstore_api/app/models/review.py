@@ -24,9 +24,10 @@ class Review(TransactionMixin):
 
     user: Mapped['User'] = relationship('User', back_populates='reviews')
     book: Mapped['Book'] = relationship('Book', back_populates='reviews')
-    
+
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime(), default=datetime.datetime.now)
-    updated_at: Mapped[datetime.datetime] = mapped_column(DateTime(), default=datetime.datetime.now, onupdate=datetime.datetime.now)
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(), default=datetime.datetime.now, onupdate=datetime.datetime.now)
 
     # Adds a table-level CheckConstraint for ratings from 1 to 5
     __table_args__ = (
@@ -34,4 +35,4 @@ class Review(TransactionMixin):
     )
 
     def __repr__(self):
-        return '<Review %r>' % self.title
+        return f'<Review {self.rating}>'

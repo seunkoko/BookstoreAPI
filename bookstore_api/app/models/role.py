@@ -1,7 +1,5 @@
-import datetime
-
 from typing import List, TYPE_CHECKING
-from sqlalchemy import String, DateTime
+from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .mixins import TransactionMixin
@@ -20,4 +18,4 @@ class Role(TransactionMixin):
     users: Mapped[List['User']] = relationship('User', back_populates='role')
 
     def __repr__(self):
-        return '<Role %r>' % self.name
+        return f'<Role {self.name}>'
