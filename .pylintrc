@@ -9,10 +9,27 @@ extension-pkg-whitelist=
 
 # Directories to completely ignore during linting.
 ignore=
+    .git,
+    __pycache__,
+    .pytest_cache,
+    .venv,
+    venv,
     alembic,
     migrations,
-    .venv,
+    tests,
+    docs,
     __pycache__
+
+# File patterns to ignore, regardless of which directory they are in.
+# Useful for skipping common configuration files or auto-generated files.
+ignore-patterns=
+    __init__.py,     # Often empty or trivial, and frequently used in packages
+    setup.py,        # Installation script
+    wsgi.py,         # WSGI application entry point
+    asgi.py,         # ASGI application entry point
+    manage.py,       # Django/Flask management scripts
+    *.txt,
+    *.md
 
 
 # --- MESSAGES CONTROL ---
