@@ -21,7 +21,7 @@ def upload_photo_to_s3(file_data, file_name):
     try:
         s3_client.upload_fileobj(
             file_data,
-            os.getenv('AWS_S3_BUCKET_NAME'), 
+            os.getenv('AWS_S3_BUCKET_NAME'),
             s3_key,
             ExtraArgs={
                 'ContentType': file_data.content_type, 

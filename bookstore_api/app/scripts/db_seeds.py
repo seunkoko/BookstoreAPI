@@ -16,7 +16,7 @@ db_cli = AppGroup('seed', help='Database related commands.')
 @click.argument('name')
 def greet_command(name):
     """Greets a user by their provided name."""
-    
+
     click.echo(f"Hello {name}! Welcome to the custom Flask CLI.")
 
 # To run the nested command:
@@ -81,7 +81,7 @@ def create_admin_user(username, email, password):
     click.echo('Creating admin user...')
     try:
         # fetch admin role
-        admin_role = db.session.query(Role).filter(RoleType.name == 'admin').one_or_none()        
+        admin_role = db.session.query(Role).filter(Role.name == RoleType.ADMIN.value).one_or_none()
         if not admin_role:
             click.echo("❌ Admin role not found. Please seed roles first.")
             return

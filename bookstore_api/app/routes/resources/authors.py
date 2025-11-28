@@ -60,10 +60,9 @@ class AuthorResource(Resource):
 
     def put(self, author_id):
         author_data = request.get_json(silent=True)
-        author_schema = AuthorSchema(partial=True, exclude=['books'])
 
         try:
-            validated_data = author_schema.load(author_data)
+            validated_data = AuthorSchema(partial=True, exclude=['books']).load(author_data)
         except ValidationError as e:
             current_app.logger.error(f"Validation error occured during author update: {e}")
             return handle_errors('author update failure', 400, e)

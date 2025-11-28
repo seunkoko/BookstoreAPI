@@ -27,11 +27,12 @@ def register():
         current_app.logger.error(f"Validation error occured during registration: {e}")
         return handle_errors('register failure', 400, e)
 
-    if not is_valid_email_format(validated_data['email']):
-        return handle_errors('invalid email format', 400)
-
-    if not is_strong_password(validated_data['password']):
-        return handle_errors('weak password', 400)
+    if (
+        not is_valid_email_format(validated_data['email'])
+        or not is_strong_password(validated_data['password'])
+    ):
+        return handle_errors(
+            'check your email is well formatter and your password is strong', 400)
 
     user_exists = User.query.filter_by(email=validated_data['email']).one_or_none()
     if user_exists:

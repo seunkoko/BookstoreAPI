@@ -56,10 +56,8 @@ class BookCategoryResource(Resource):
 
     def put(self, category_id):
         """Updating a book category by ID"""
-        category_schema = BookCategorySchema(partial=True, exclude=['books'])
-
         try:
-            validated_data = category_schema.load(request.get_json(silent=True))
+            validated_data = BookCategorySchema(partial=True, exclude=['books']).load(request.get_json(silent=True))
         except ValidationError as e:
             current_app.logger.error(f"Validation error occured during book category ({category_id}) update: {e}")
             return handle_errors('book category update failure', 400, e)
