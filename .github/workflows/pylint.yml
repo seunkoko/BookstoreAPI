@@ -25,7 +25,7 @@ jobs:
               # and installs project dependencies (including Pylint, if it's in your dev dependencies)
               run: |
                   poetry config virtualenvs.in-project true
-                  poetry install --no-root --only dev # Ensure dev dependencies (like pylint) are installed
+                  poetry install --no-root # Ensure dev dependencies (like pylint) are installed
 
             - name: Run Pylint with .pylintrc configuration
               # CRUCIAL STEP: Use 'poetry run' to execute pylint inside the virtual environment.

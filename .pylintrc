@@ -44,6 +44,9 @@ disable=
     missing-function-docstring,
     invalid-name,
 
+    # Error Handling
+    broad-exception-caught,
+
     # Design & Style Checks
     too-few-public-methods,
     too-many-locals,

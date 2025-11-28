@@ -6,10 +6,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-ACCESS_EXPIRES = timedelta(hours=1)
-
 def revoke_token(redis_db, jti: str):
-    redis_db.setex(jti, os.getenv('JWT_ACCESS_TOKEN_EXPIRES', ACCESS_EXPIRES), 'true')
+    redis_db.setex(
+        jti,
+        timedelta(
+            days=int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES_DAYS', '1'))
+        ).total_seconds(),
+        'true'
+    )
     return jsonify({"message": "Access token revoked"}), 200
 
 

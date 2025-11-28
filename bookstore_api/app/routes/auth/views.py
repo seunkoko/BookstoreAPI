@@ -112,12 +112,12 @@ def refresh():
     return jsonify(access_token=access_token)
 
 @jwt.token_in_blocklist_loader
-def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
+def check_if_token_is_revoked(_, jwt_payload: dict):
     jti = jwt_payload["jti"]
     return redis_db.get(jti) is not None
 
 @jwt.user_lookup_loader
-def user_lookup_callback(_jwt_header, jwt_data):
+def user_lookup_callback(_, jwt_data):
     # 'jwt_data' is a dictionary containing the claims (payload) of the token
     # The identity is stored under the key defined by JWT_IDENTITY_CLAIM (default: 'sub')
     identity = jwt_data["sub"]
