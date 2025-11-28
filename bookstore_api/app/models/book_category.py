@@ -21,7 +21,8 @@ class BookCategory(TransactionMixin):
     books: Mapped[List['Book']] = relationship('Book', back_populates='category')
 
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime(), default=datetime.datetime.now)
-    updated_at: Mapped[datetime.datetime] = mapped_column(DateTime(), default=datetime.datetime.now, onupdate=datetime.datetime.now)
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(), default=datetime.datetime.now, onupdate=datetime.datetime.now)
 
     def __repr__(self):
-        return '<BookCategory %r>' % self.name
+        return f'<BookCategory {self.name}>'

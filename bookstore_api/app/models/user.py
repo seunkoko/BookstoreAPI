@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from . import Review, Role
 
 class User(TransactionMixin):
+    """User model representing a user in the bookstore."""
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -23,9 +24,10 @@ class User(TransactionMixin):
 
     role: Mapped['Role'] = relationship('Role', back_populates='users')
     reviews: Mapped[List['Review']] = relationship('Review', back_populates='user')
-    
+
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime(), default=datetime.datetime.now)
-    updated_at: Mapped[datetime.datetime] = mapped_column(DateTime(), default=datetime.datetime.now, onupdate=datetime.datetime.now)
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(), default=datetime.datetime.now, onupdate=datetime.datetime.now)
 
     def __repr__(self):
-        return '<User %r>' % self.email
+        return f'<User {self.email}>'

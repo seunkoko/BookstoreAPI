@@ -37,7 +37,7 @@ def create_app():
 
     # Register custom CLI commands
     init_app_commands(app)
-    
+
     @app.errorhandler(404)
     def resource_not_found(exception):
         """Return custom JSON when resource does not exist"""
@@ -46,7 +46,7 @@ def create_app():
             "status": 'fail',
             "error": exception.description if hasattr(exception, "description") else default_message
         }), 404
-    
+
     @app.errorhandler(ApiError)
     def api_error_handler(error):
         """Return custom JSON when ApiError is raised"""
@@ -57,7 +57,7 @@ def create_app():
             "status": 'fail',
             "error": error.message
         }), error.status_code
-    
+
     @app.errorhandler(HTTPException)
     def api_httpException_handler(error):
         """Return custom JSON when HttpException is raised"""

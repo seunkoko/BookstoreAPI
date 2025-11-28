@@ -15,7 +15,7 @@ class TransactionMixin(db.Model):
         except SQLAlchemyError as error:
             db.session.rollback()
             raise error
-        
+
     def delete(self):
         """Delete an instance of the model from the database."""
         try:

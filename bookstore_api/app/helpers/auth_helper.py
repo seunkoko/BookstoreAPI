@@ -6,10 +6,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-ACCESS_EXPIRES = timedelta(hours=1)
-
 def revoke_token(redis_db, jti: str):
-    redis_db.setex(jti, os.getenv('JWT_ACCESS_TOKEN_EXPIRES', ACCESS_EXPIRES), 'true')
+    redis_db.setex(
+        jti,
+        timedelta(
+            days=int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES_DAYS', '1'))
+        ).total_seconds(),
+        'true'
+    )
     return jsonify({"message": "Access token revoked"}), 200
 
 
@@ -31,13 +35,13 @@ def is_strong_password(password):
     - At least one digit.
     - At least one special character (from !@#$%^&*).
     """
-    # Lookahead assertions: 
+    # Lookahead assertions:
     # (?=.*[A-Z]) - Must contain at least one uppercase letter
     # (?=.*[a-z]) - Must contain at least one lowercase letter
     # (?=.*\d)    - Must contain at least one digit
     # (?=.*[!@#$%^&*]) - Must contain at least one special character
     # .{8,}       - Must be 8 characters or more
-    
+
     strong_password_regex = re.compile(
         r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$"
     )
