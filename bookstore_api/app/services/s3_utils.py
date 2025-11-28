@@ -24,8 +24,7 @@ def upload_photo_to_s3(file_data, file_name):
             os.getenv('AWS_S3_BUCKET_NAME'),
             s3_key,
             ExtraArgs={
-                'ContentType': file_data.content_type, 
-                'ACL': 'public-read'  # Makes the file publicly accessible
+                'ContentType': file_data.content_type,
             }
         )
 
