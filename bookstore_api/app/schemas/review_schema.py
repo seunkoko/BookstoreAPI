@@ -10,8 +10,10 @@ class ReviewSchema(ma.Schema):
         validate=validate.Range(min=1, max=5, error="Rating must be between 1 and 5.")
     )
     comment = fields.String(allow_none=True)
-    book = fields.Nested('BookSchema', only=['title'])
-    user = fields.Nested('UserSchema', only=['username'])
+    book_id = fields.Integer(load_only=True)
+    user_id = fields.Integer(dump_only=True)
+    book = fields.Nested('BookSchema', only=['id', 'title'], dump_only=True)
+    user = fields.Nested('UserSchema', only=['id', 'username'], dump_only=True)
     created_at = fields.DateTime(dump_only=True)
     updated_at = fields.DateTime(dump_only=True)
 
