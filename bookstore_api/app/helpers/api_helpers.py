@@ -1,7 +1,12 @@
-from flask import jsonify, make_response
+from flask import jsonify, make_response, current_app
 from sqlalchemy import or_, func
 
-from bookstore_api.app.models import Book, Author, BookCategory
+from bookstore_api.app.models import (
+    Book, Author, BookCategory, Review
+)
+
+DEFAULT_PER_PAGE = 10
+DEFAULT_PAGE = 1
 
 def api_response(data=None, message="Success", status_code=200, **kwargs):
     """
@@ -19,6 +24,15 @@ def api_response(data=None, message="Success", status_code=200, **kwargs):
     # Use make_response to set the HTTP status code
     return make_response(jsonify(response_body), status_code)
 
+def get_page_filters(filters):
+    """Extract pagination parameters from request args."""
+    try:
+        per_page = int(filters.get('per_page', DEFAULT_PER_PAGE))
+        page = int(filters.get('page', DEFAULT_PAGE))
+    except ValueError as e:
+        current_app.logger.error(f"Pagination parameters must be integers: {e}")
+        return None, None
+    return per_page, page
 
 def search_filter_and_sort_books(books_query, filters):
     """Apply filtering and sorting to the books query based on request args."""
@@ -51,7 +65,7 @@ def search_filter_and_sort_books(books_query, filters):
     sort_by = filters.get('sort_by', 'title')  # Default sort by title
     sort_order = filters.get('sort_order', 'asc')  # Default ascending order
 
-    if hasattr(Book, sort_by):
+    if sort_by in ['title', 'publication_year'] and hasattr(Book, sort_by):
         sort_column = getattr(Book, sort_by)
         if sort_order == 'desc':
             sort_column = sort_column.desc()
@@ -60,3 +74,36 @@ def search_filter_and_sort_books(books_query, filters):
         books_query = books_query.order_by(sort_column)
 
     return books_query
+
+def filter_and_sort_reviews(reviews_query, filters):
+    """Apply filtering and sorting to the reviews query based on request args."""
+    # Filtering
+    user_id = filters.get('user_id')
+    if user_id:
+        try:
+            reviews_query = reviews_query.filter_by(user_id=int(user_id))
+        except ValueError:
+            pass  # Invalid user_id will be handled by the caller
+
+    min_rating = filters.get('min_rating')
+    if min_rating:
+        try:
+            min_rating_value = int(min_rating)
+            if 1 <= min_rating_value <= 5:
+                reviews_query = reviews_query.filter(Review.rating >= min_rating_value)
+        except ValueError:
+            pass  # Invalid min_rating will be handled by the caller
+
+    # Sorting
+    sort_by = filters.get('sort_by', 'created_at')  # Default sort by created_at
+    sort_order = filters.get('sort_order', 'desc')  # Default descending order
+
+    if sort_by in ['created_at', 'rating'] and hasattr(Review, sort_by):
+        sort_column = getattr(Review, sort_by)
+        if sort_order == 'desc':
+            sort_column = sort_column.desc()
+        else:
+            sort_column = sort_column.asc()
+        reviews_query = reviews_query.order_by(sort_column)
+
+    return reviews_query

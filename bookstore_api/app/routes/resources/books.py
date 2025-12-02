@@ -5,7 +5,7 @@ from marshmallow import ValidationError
 
 from bookstore_api.app.helpers import (
     role_required, RoleType, handle_errors, api_response,
-    search_filter_and_sort_books
+    search_filter_and_sort_books, get_page_filters
 )
 from bookstore_api.app.schemas import BookSchema
 from bookstore_api.app.models import Book, Author, BookCategory
@@ -22,12 +22,9 @@ class BookListResource(Resource):
 
     def get(self):
         """Fetching all books with pagination"""
-        try:
-            per_page = int(request.args.get('per_page', DEFAULT_PER_PAGE))
-            page = int(request.args.get('page', DEFAULT_PAGE))
-        except ValueError as e:
-            current_app.logger.error(f"Pagination parameters must be integers: {e}")
-            return handle_errors('Pagination parameters must be integers', 400, e)
+        per_page, page = get_page_filters(request.args)
+        if per_page is None or page is None:
+            return handle_errors('Pagination parameters must be integers', 400)
 
         books = search_filter_and_sort_books(Book.query, request.args)
         try:
