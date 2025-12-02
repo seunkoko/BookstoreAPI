@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required, get_current_user
 from marshmallow import ValidationError
 
 from bookstore_api.app.helpers import (
-    RoleType, handle_errors, api_response
+    RoleType, handle_errors, api_response, filter_and_sort_reviews
 )
 from bookstore_api.app.schemas import ReviewSchema
 from bookstore_api.app.models import Review, Book
@@ -28,34 +28,17 @@ class ReviewListResource(Resource):
             current_app.logger.error(f"Pagination parameters must be integers: {e}")
             return handle_errors('Pagination parameters must be integers', 400, e)
 
-        # Start with base query
-        query = Review.query
-
-        # Apply filters
+        # Start with base query filtered by book_id
         try:
-            query = query.filter_by(book_id=int(book_id))
+            query = Review.query.filter_by(book_id=int(book_id))
         except ValueError:
             return handle_errors('book_id must be an integer', 400)
 
-        user_id = request.args.get('user_id')
-        if user_id:
-            try:
-                query = query.filter_by(user_id=int(user_id))
-            except ValueError:
-                return handle_errors('user_id must be an integer', 400)
-
-        min_rating = request.args.get('min_rating')
-        if min_rating:
-            try:
-                min_rating_value = int(min_rating)
-                if min_rating_value < 1 or min_rating_value > 5:
-                    return handle_errors('min_rating must be between 1 and 5', 400)
-                query = query.filter(Review.rating >= min_rating_value)
-            except ValueError:
-                return handle_errors('min_rating must be an integer', 400)
+        # Apply additional filters and sorting using helper function
+        reviews = filter_and_sort_reviews(query, request.args)
 
         try:
-            paginated_reviews = query.paginate(
+            paginated_reviews = reviews.paginate(
                 page=page, per_page=per_page, error_out=False)
             return api_response({
                 'reviews': reviews_schema.dump(paginated_reviews.items),

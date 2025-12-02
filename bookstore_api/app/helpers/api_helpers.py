@@ -1,7 +1,7 @@
 from flask import jsonify, make_response
 from sqlalchemy import or_, func
 
-from bookstore_api.app.models import Book, Author, BookCategory
+from bookstore_api.app.models import Book, Author, BookCategory, Review
 
 def api_response(data=None, message="Success", status_code=200, **kwargs):
     """
@@ -60,3 +60,37 @@ def search_filter_and_sort_books(books_query, filters):
         books_query = books_query.order_by(sort_column)
 
     return books_query
+
+def filter_and_sort_reviews(reviews_query, filters):
+    """Apply filtering and sorting to the reviews query based on request args."""
+    # Filtering
+    user_id = filters.get('user_id')
+    if user_id:
+        try:
+            reviews_query = reviews_query.filter_by(user_id=int(user_id))
+        except ValueError:
+            pass  # Invalid user_id will be handled by the caller
+
+    min_rating = filters.get('min_rating')
+    if min_rating:
+        try:
+            min_rating_value = int(min_rating)
+            if 1 <= min_rating_value <= 5:
+                from bookstore_api.app.models import Review
+                reviews_query = reviews_query.filter(Review.rating >= min_rating_value)
+        except ValueError:
+            pass  # Invalid min_rating will be handled by the caller
+
+    # Sorting
+    sort_by = filters.get('sort_by', 'created_at')  # Default sort by created_at
+    sort_order = filters.get('sort_order', 'desc')  # Default descending order
+
+    if hasattr(Review, sort_by):
+        sort_column = getattr(Review, sort_by)
+        if sort_order == 'desc':
+            sort_column = sort_column.desc()
+        else:
+            sort_column = sort_column.asc()
+        reviews_query = reviews_query.order_by(sort_column)
+
+    return reviews_query
