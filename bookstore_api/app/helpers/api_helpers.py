@@ -1,7 +1,12 @@
-from flask import jsonify, make_response
+from flask import jsonify, make_response, current_app
 from sqlalchemy import or_, func
 
-from bookstore_api.app.models import Book, Author, BookCategory, Review
+from bookstore_api.app.models import (
+    Book, Author, BookCategory, Review
+)
+
+DEFAULT_PER_PAGE = 10
+DEFAULT_PAGE = 1
 
 def api_response(data=None, message="Success", status_code=200, **kwargs):
     """
@@ -19,6 +24,15 @@ def api_response(data=None, message="Success", status_code=200, **kwargs):
     # Use make_response to set the HTTP status code
     return make_response(jsonify(response_body), status_code)
 
+def get_page_filters(filters):
+    """Extract pagination parameters from request args."""
+    try:
+        per_page = int(filters.get('per_page', DEFAULT_PER_PAGE))
+        page = int(filters.get('page', DEFAULT_PAGE))
+    except ValueError as e:
+        current_app.logger.error(f"Pagination parameters must be integers: {e}")
+        return None, None
+    return per_page, page
 
 def search_filter_and_sort_books(books_query, filters):
     """Apply filtering and sorting to the books query based on request args."""
@@ -76,7 +90,6 @@ def filter_and_sort_reviews(reviews_query, filters):
         try:
             min_rating_value = int(min_rating)
             if 1 <= min_rating_value <= 5:
-                from bookstore_api.app.models import Review
                 reviews_query = reviews_query.filter(Review.rating >= min_rating_value)
         except ValueError:
             pass  # Invalid min_rating will be handled by the caller

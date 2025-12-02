@@ -4,7 +4,8 @@ from flask_jwt_extended import jwt_required, get_current_user
 from marshmallow import ValidationError
 
 from bookstore_api.app.helpers import (
-    RoleType, handle_errors, api_response, filter_and_sort_reviews
+    RoleType, handle_errors, api_response, filter_and_sort_reviews,
+    get_page_filters
 )
 from bookstore_api.app.schemas import ReviewSchema
 from bookstore_api.app.models import Review, Book
@@ -21,12 +22,9 @@ class ReviewListResource(Resource):
 
     def get(self, book_id):
         """Fetching all reviews with optional filtering and pagination"""
-        try:
-            per_page = int(request.args.get('per_page', DEFAULT_PER_PAGE))
-            page = int(request.args.get('page', DEFAULT_PAGE))
-        except ValueError as e:
-            current_app.logger.error(f"Pagination parameters must be integers: {e}")
-            return handle_errors('Pagination parameters must be integers', 400, e)
+        per_page, page = get_page_filters(request.args)
+        if per_page is None or page is None:
+            return handle_errors('Pagination parameters must be integers', 400)
 
         # Start with base query filtered by book_id
         try:
@@ -87,7 +85,7 @@ class ReviewResource(Resource):
     def get(self, review_id):
         """Fetching a review by ID"""
         review = Review.query.get_or_404(review_id, description='Review not found')
-        
+
         current_user = get_current_user()
         # Users can only view their own reviews, admins can view any
         if current_user.role.name != RoleType.ADMIN.value and review.user_id != current_user.id:
@@ -100,7 +98,7 @@ class ReviewResource(Resource):
     def put(self, review_id):
         """Updating a review by ID"""
         review_exists = Review.query.get_or_404(review_id, description='Review not found')
-        
+
         current_user = get_current_user()
         # Only the review owner can update (not even admins)
         if review_exists.user_id != current_user.id:
@@ -115,7 +113,7 @@ class ReviewResource(Resource):
 
         for key, value in validated_data.items():
             setattr(review_exists, key, value)
-        
+
         try:
             review_exists.save()
         except Exception as e:
