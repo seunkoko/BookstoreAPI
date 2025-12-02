@@ -65,7 +65,7 @@ def search_filter_and_sort_books(books_query, filters):
     sort_by = filters.get('sort_by', 'title')  # Default sort by title
     sort_order = filters.get('sort_order', 'asc')  # Default ascending order
 
-    if hasattr(Book, sort_by):
+    if sort_by in ['title', 'publication_year'] and hasattr(Book, sort_by):
         sort_column = getattr(Book, sort_by)
         if sort_order == 'desc':
             sort_column = sort_column.desc()
@@ -98,7 +98,7 @@ def filter_and_sort_reviews(reviews_query, filters):
     sort_by = filters.get('sort_by', 'created_at')  # Default sort by created_at
     sort_order = filters.get('sort_order', 'desc')  # Default descending order
 
-    if hasattr(Review, sort_by):
+    if sort_by in ['created_at', 'rating'] and hasattr(Review, sort_by):
         sort_column = getattr(Review, sort_by)
         if sort_order == 'desc':
             sort_column = sort_column.desc()

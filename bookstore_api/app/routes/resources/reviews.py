@@ -106,7 +106,7 @@ class ReviewResource(Resource):
 
         review_data = request.get_json(silent=True)
         try:
-            validated_data = ReviewSchema(partial=True, exclude=['book_id', 'user_id']).load(review_data)
+            validated_data = ReviewSchema(partial=True).load(review_data)
         except ValidationError as e:
             current_app.logger.error(f"Validation error occurred during review ({review_id}) update: {e}")
             return handle_errors('review update failure', 400, e)
