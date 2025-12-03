@@ -1,7 +1,9 @@
 import datetime
 
 from typing import TYPE_CHECKING
-from sqlalchemy import Integer, DateTime, Text, CheckConstraint, ForeignKey
+from sqlalchemy import (
+    Integer, DateTime, Text, CheckConstraint, ForeignKey, UniqueConstraint
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .mixins import TransactionMixin
@@ -32,6 +34,7 @@ class Review(TransactionMixin):
     # Adds a table-level CheckConstraint for ratings from 1 to 5
     __table_args__ = (
         CheckConstraint('rating >= 1 AND rating <= 5', name='ck_rating_range'),
+        UniqueConstraint('book_id', 'user_id', name='_user_book_review_uc'),
     )
 
     def __repr__(self):
