@@ -1,0 +1,52 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          
+      - name: Install dependencies
+        run: poetry install
+        
+      - name: Run tests
+        # 1. Define the secrets as environment variables for this specific step
+        env:
+          # This maps your GitHub Secret
+          JWT_ACCESS_TOKEN_EXPIRES_DAYS: ${{ secrets.JWT_ACCESS_TOKEN_EXPIRES_DAYS }}
+          JWT_ALGORITHM: ${{ secrets.JWT_ALGORITHM }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          
+        run: poetry run pytest
+
+      # OPTIONAL: You can add another step to verify they are set (GitHub redacts the values)
+      - name: Verify Environment Variables (Optional)
+        env:
+          JWT_ACCESS_TOKEN_EXPIRES_DAYS: ${{ secrets.JWT_ACCESS_TOKEN_EXPIRES_DAYS }}
+          JWT_ALGORITHM: ${{ secrets.JWT_ALGORITHM }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        run: |
+          echo "JWT_ACCESS_TOKEN_EXPIRES_DAYS set successfully (will show as ***): $JWT_ACCESS_TOKEN_EXPIRES_DAYS"
+          echo "JWT_ALGORITHM set successfully (will show as ***): $JWT_ALGORITHM"
+          echo "JWT_SECRET_KEY set successfully (will show as ***): $JWT_SECRET_KEY"
+          echo "SECRET_KEY set successfully (will show as ***): $SECRET_KEY"
+          
